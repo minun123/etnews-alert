@@ -2,7 +2,7 @@
   "keywords": ["반도체", "AI", "배터리"],
   "search_description": true,
 
-  "notify_mode": "daily",
+  "notify_mode": "off",
   "daily_hour": 8,
   "page_url": "https://minun123.github.io/etnews-alert/",
 
