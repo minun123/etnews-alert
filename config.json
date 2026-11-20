@@ -1,0 +1,22 @@
+{
+  "keywords": ["반도체", "AI", "배터리"],
+  "search_description": true,
+
+  "notify_mode": "daily",
+  "daily_hour": 8,
+  "page_url": "https://minun123.github.io/etnews-alert/",
+
+  "max_articles": 1000,
+  "interval_minutes": 10,
+  "notify_on_first_run": false,
+
+  "feeds": [
+    "https://rss.etnews.com/Section901.xml"
+  ],
+
+  "gmail": { "enabled": true },
+  "kakao": {
+    "enabled": false,
+    "redirect_uri": "http://localhost:5000/callback"
+  }
+}
