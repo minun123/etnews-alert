@@ -94,10 +94,19 @@ def clean_text(s):
     return re.sub(r"\s+", " ", s).strip()
 
 
-def fetch_feed(url):
+def fetch_feed(url, tries=3):
+    """연결이 가끔 끊기므로(특히 GitHub 서버에서) 몇 번 다시 시도"""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=20) as resp:
-        raw = resp.read()
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                raw = resp.read()
+            break
+        except Exception as e:
+            if i == tries - 1:
+                raise
+            log(f"  재시도 {i + 1}/{tries - 1} ({url}): {e}")
+            time.sleep(3 * (i + 1))  # 최악의 경우에도 피드 5개 약 3분 (작업 제한 5분 안)
     root = ET.fromstring(raw)
     items = []
     for it in root.iter("item"):
@@ -364,6 +373,11 @@ def check_once(cfg, dry_run=False):
                 articles.setdefault(a["link"], a)
         except Exception as e:
             log(f"피드 읽기 실패 ({url}): {e}")
+
+    if not articles:
+        # 전부 실패: 아무것도 바꾸지 않고 다음 실행 때 다시 시도
+        log("피드를 하나도 읽지 못했습니다. 다음 실행 때 다시 시도합니다.")
+        return
 
     new = [a for link, a in articles.items() if link not in seen]
     matches = []
